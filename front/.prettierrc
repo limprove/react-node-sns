@@ -1,0 +1,13 @@
+{
+  "trailingComma": "all",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "plugins": [
+    "eslint-config-airbnb",
+    "eslint-plugin-import",
+    "eslint-plugin-react",
+    "eslint-plugin-react-hooks",
+    "eslint-plugin-jsx-a11y"
+  ]
+}
