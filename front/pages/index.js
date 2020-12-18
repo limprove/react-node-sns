@@ -4,12 +4,28 @@ import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { LOAD_POSTS_REQUEST } from '../Redux-reducer/post';
+import { LOAD_MY_INFO_REQUEST } from '../Redux-reducer/user';
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePost, loadPostsLoading } = useSelector((state) => state.post);
+  const { mainPosts,
+    hasMorePost,
+    loadPostsLoading,
+    retweetError } = useSelector((state) => state.post);
   const dispatch = useDispatch();
+
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
+    if (retweetError) {
+      // eslint-disable-next-line no-alert
+      return alert(retweetError);
+    }
+  }, [retweetError]);
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
     dispatch({
       type: LOAD_POSTS_REQUEST,
     });
@@ -21,8 +37,10 @@ const Home = () => {
         + document.documentElement.clientHeight
         > document.documentElement.scrollHeight - 700) {
         if (hasMorePost && !loadPostsLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
           dispatch({
             type: LOAD_POSTS_REQUEST,
+            lastId,
           });
         }
       }
@@ -31,7 +49,7 @@ const Home = () => {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [hasMorePost, loadPostsLoading]);
+  }, [hasMorePost, loadPostsLoading, mainPosts]);
 
   return (
     <AppLayout>

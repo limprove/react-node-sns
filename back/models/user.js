@@ -13,13 +13,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false, //필수
       },
       password: {
-        type: DataTypes.STRING(50),
-        allowNull: false, //필수
+        type: DataTypes.STRING(100),
+        allowNull: false, // 필수
       },
     },
     {
+      modelName: 'User',
+      tableName: 'users',
       charset: 'utf8',
-      collate: 'utf8_general_ci',
+      collate: 'utf8_general_ci', // 한글 저장
+      sequelize,
     },
   );
   User.associate = (db) => {

@@ -11,7 +11,7 @@ import {
   Header,
 } from './styles';
 
-export const ImagesZoom = ({ images, onClose }) => {
+export default function ImagesZoom({ images, onClose }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   return (
     <Overlay>
@@ -32,7 +32,7 @@ export const ImagesZoom = ({ images, onClose }) => {
           >
             {images?.map((v) => (
               <ImgWrapper key={v.src}>
-                <img src={v.src} alt={v.src} />
+                <img src={`http://localhostL3065/${v.src}`} alt={v.src} />
               </ImgWrapper>
             ))}
           </Slick>
@@ -46,9 +46,10 @@ export const ImagesZoom = ({ images, onClose }) => {
       </SlickWrapper>
     </Overlay>
   );
-};
+}
 
 ImagesZoom.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   onClose: PropTypes.func.isRequired,
 };
+

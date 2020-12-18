@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Form, Input, Checkbox, Button } from 'antd';
+import { Form, Input, Checkbox, Button, Alert } from 'antd';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
@@ -14,7 +14,7 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -22,10 +22,32 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState(false);
 
   useEffect(() => {
+    if (me && me.id) {
+      Router.replace('/');
+    }
+  }, []);
+
+  useEffect(() => {
     if (signUpDone) {
-      Router.push('/');
+      Router.replace('/');
     }
   }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      <Alert
+        message="Error"
+        showIcon
+        description={signUpError}
+        type="error"
+        action={(
+          <Button size="small" danger>
+            Done
+          </Button>
+      )}
+      />;
+    }
+  }, [signUpError]);
 
   const onChangePasswordCheck = useCallback(
     ({ target: { value } }) => {
