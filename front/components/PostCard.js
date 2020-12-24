@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, Button, Popover, Avatar, List, Comment } from 'antd';
 import PropTypes from 'prop-types';
 import {

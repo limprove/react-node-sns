@@ -7,7 +7,6 @@ import rootReducer from '../Redux-reducer';
 import rootSaga from '../Redux-saga';
 
 const configureStore = (context) => {
-  console.log(context);
   const sagaMiddleware = createSagaMiddleware();
   const middlewares = [sagaMiddleware];
   const enhancer = process.env.NODE_ENV === 'production'

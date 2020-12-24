@@ -16,6 +16,9 @@ import {
   LOAD_MY_INFO_FAILURE,
   LOAD_MY_INFO_REQUEST,
   LOAD_MY_INFO_SUCCESS,
+  LOAD_USER_FAILURE,
+  LOAD_USER_REQUEST,
+  LOAD_USER_SUCCESS,
   LOG_IN_FAILURE,
   LOG_IN_REQUEST,
   LOG_IN_SUCCESS,
@@ -157,8 +160,8 @@ function* changeNickname(action) {
   }
 }
 
-function loadFollowingsAPI(data) {
-  return axios.get('/user/followings', data);
+function loadFollowingsAPI() {
+  return axios.get('/user/followings');
 }
 
 function* loadFollowings(action) {
@@ -177,8 +180,8 @@ function* loadFollowings(action) {
   }
 }
 
-function loadFollowersAPI(data) {
-  return axios.get('/user/followers', data);
+function loadFollowersAPI() {
+  return axios.get('/user/followers');
 }
 
 function* loadFollowers(action) {
@@ -212,6 +215,26 @@ function* removeFollower(action) {
     console.error(err);
     yield put({
       type: REMOVE_FOLLOWER_FAILURE,
+      err: err.response.data,
+    });
+  }
+}
+
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_USER_FAILURE,
       err: err.response.data,
     });
   }
@@ -257,6 +280,10 @@ function* watchRemoveFollower() {
   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogIn),
@@ -269,5 +296,6 @@ export default function* userSaga() {
     fork(watchLoadFollowers),
     fork(watchLoadFollowings),
     fork(watchRemoveFollower),
+    fork(watchLoadUser),
   ]);
 }

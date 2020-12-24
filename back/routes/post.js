@@ -31,7 +31,7 @@ const upload = multer({
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const hashtags = req.body.content.match(/#[^\s#]+/g);
-    console.log(req.body);
+
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
@@ -170,8 +170,45 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => {
 
 router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
   try {
-    console.log(req.files);
     res.status(200).json(req.files.map((v) => v.filename));
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.get('/:postId', async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    if (!post) {
+      return res.status(404).send('존재하지 않는 게시물입니다.');
+    }
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [
+        {
+          model: Post,
+          as: 'Retweet',
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'nickname'],
+            },
+            { model: Image },
+          ],
+        },
+        { model: User, attributes: ['id', 'nickname'] },
+        { model: User, as: 'Likers', attributes: ['id', 'nickname'] },
+        { model: Image },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ['id', 'nickname'] }],
+        },
+      ],
+    });
+    return res.status(201).json(fullPost);
   } catch (err) {
     console.error(err);
     next(err);
